@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div class="container">
+
+  <div>
+    <h1 class="h1">Group Grades</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-2">
+      <h4 class="h4">Score: {{ group_score['total'] }}</h4>
+    </div>
+    <div class="col-lg-10">
+      <table class="table">
+        <tr>
+          <th>Tasks and Bugs</th>
+          <th>Pull Requests</th>
+          <th>Test Coverage</th>
+        </tr>
+        <tr>
+          <td>Score: {{ group_score['task_score'] }}<br>Rate: {{ group_score['task_rate'] }}</td>
+          <td>Score: {{ group_score['pr_score'] }}<br>Rate: {{ group_score['pr_rate'] }}</td>
+          <td>Score: {{ group_score['test_score'] }}<br>Rate: {{ group_score['test_rate'] }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <h1 class="h1">Individual Grades</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <h4 class="h4">Avg Task Load: {{ avg_tasks }}</h4>
+      {% if replaced_avg_tasks %}
+      <span class="danger btn-danger">
+        Since the average load was below the minimum, 720 minutes was used as a substitute when computing grades.
+      </span>
+      {% endif %}
+    </div>
+    <div class="col-lg-4">
+      <h4 class="h4">Avg PR Count: {{ avg_prs }}</h4>
+    </div>
+    <div class="col-lg-4">
+      <h4 class="h4">Avg PR Reviews: {{ avg_reviews }}</h4>
+    </div>
+  </div>
+
+{% for assignee, type_state in assignee_types.items() %}
+  <div>
+    <div class="row">
+      <div class="col-lg-6">
+        <h2 class="h2">{{ assignee }}</h2>
+      </div>
+      <div class="col-lg-6">
+        <br>
+        <button class="btn pull-right" onclick="$('#{{ assignee.replace(' ', '_') }}-results').toggle();">Show Results</button>
+      </div>
+    </div>
+
+    <div id="{{ assignee.replace(' ', '_') }}-results" style="display:none">
+      <div class="row">
+        <div class="col-lg-2">
+          <h4 class="h4">Score</h4>
+        </div>
+        <div class="col-lg-10">
+          <table class="table">
+            <tr>
+              <th>Individual Score</th>
+              <th>Tasks and Bugs</th>
+              <th>Pull Requests</th>
+              <th>Participation</th>
+            </tr>
+            <tr>
+              <td><b>{{ type_state['total']['score'] }}</b></td>
+              <td>{{ type_state['tasks'].get('score', 0) }}</td>
+              <td>{{ type_state['prs'].get('score', 0) }}</td>
+              <td>{{ type_state['participation']['score'] }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-2">
+          <h4 class="h4">Tasks and Bugs</h4>
+        </div>
+        <div class="col-lg-10">
+          <table class="table">
+            <tr>
+              <th>Closed</th>
+              <th>Open</th>
+              <th>Total Load</th>
+              <th>Close Rate</th>
+              <th>Multiplier</th>
+              <th>Score</th>
+            </tr>
+            <tr>
+              <td>{{ type_state['tasks'].get('closed', 0) }}</td>
+              <td>{{ type_state['tasks'].get('active', 0) + type_state['tasks'].get('new', 0) }}</td>
+              <td>{{ type_state['tasks'].get('total', 0) }}</td>
+              <td>{{ type_state['tasks'].get('close_rate', 0) }}</td>
+              <td>{{ type_state['tasks'].get('multiplier', 0) }}</td>
+              <td>{{ type_state['tasks'].get('score', 0) }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-2">
+          <h4 class="h4">Pull Requests</h4>
+        </div>
+        <div class="col-lg-10">
+          <table class="table">
+            <tr>
+              <th>Merged</th>
+              <th>Abandoned</th>
+              <th>Total PRs</th>
+              <th>Merge Rate</th>
+              <th>Multiplier</th>
+              <th>Score</th>
+            </tr>
+            <tr>
+              <td>{{ type_state['prs'].get('merged', 0) }}</td>
+              <td>{{ type_state['prs'].get('abandoned', 0) }}</td>
+              <td>{{ type_state['prs'].get('total', 0) }}</td>
+              <td>{{ type_state['prs'].get('merge_rate', 0) }}</td>
+              <td>{{ type_state['prs'].get('multiplier', 0) }}</td>
+              <td>{{ type_state['prs'].get('score', 0) }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-2">
+          <h4 class="h4">Participation</h4>
+        </div>
+        <div class="col-lg-10">
+          <table class="table">
+            <tr>
+              <th>Attendance</th>
+              <th>Discussion</th>
+              <th>PR Reviews</th>
+              <th>Score</th>
+            </tr>
+            <tr>
+              <td>{{ type_state['attendance']['total'] }}</td>
+              <td>{{ type_state['discussion']['total'] }}</td>
+              <td>{{ type_state['reviews']['total'] }}</td>
+              <td>{{ type_state['participation']['score'] }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+    </div> <!-- end score block -->
+
+  </div><!-- end student block -->
+{% endfor %}
+
+  </div>
+</body>
+</html>
