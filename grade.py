@@ -118,15 +118,10 @@ def compute_individual_scores(
         total_prs = type_state['prs'].get('total', 0)
         if total_prs:
             merge_rate = merged_prs / total_prs
-            pr_multiplier = merged_prs / grp_avg_prs
-            pr_rate = merge_rate * pr_multiplier
         else:
-            pr_rate = 0
-            pr_multiplier = 0
             merge_rate = 0
 
-        assignee_types[assignee]['prs']['score'] = pr_rate * PR_VALUE
-        assignee_types[assignee]['prs']['multiplier'] = pr_multiplier
+        assignee_types[assignee]['prs']['score'] = merge_rate * PR_VALUE
         assignee_types[assignee]['prs']['avg'] = grp_avg_prs
         assignee_types[assignee]['prs']['merge_rate'] = merge_rate
 
