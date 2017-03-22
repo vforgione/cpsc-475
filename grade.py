@@ -202,6 +202,8 @@ def render_report(
 
 
 if __name__ == '__main__':
+    import json
+
     parser = ArgumentParser()
     parser.add_argument('-i', '--input')
     parser.add_argument('-o', '--output')
@@ -211,11 +213,10 @@ if __name__ == '__main__':
 
     query_rows = read_csv(args.input)
     student_map = tabulate_by_assignee_type_state(query_rows)
-
     total_assignee_type(student_map)
     avg_tasks, avg_prs, avg_reviews = compute_averages(student_map)
     compute_individual_scores(student_map, avg_tasks, avg_prs, avg_reviews)
-
     group_scores = compute_base_group_score(student_map, args.real_tests, args.expected_tests)
 
     render_report(student_map, group_scores, avg_tasks, avg_prs, avg_reviews, args.output)
+    print(json.dumps(student_map, indent=2))
