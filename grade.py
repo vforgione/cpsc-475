@@ -177,6 +177,26 @@ def compute_base_group_score(
     }
 
 
+def _find_bound(value):
+    rem = value % 10
+    if rem < 5:
+        return int(value / 10) * 10
+    else:
+        return int((value + 10) / 10) * 10
+
+
+def compute_individual_group_score(
+        assignee_types: Dict[str, Dict[str, Dict[str, int]]],
+        total_group_score: float) -> None:
+
+    for assignee, type_state in assignee_types.items():
+        grp_multiplier = min([_find_bound(type_state['total']['score']) / 100, 1])
+        assignee_types[assignee]['group']['score'] = grp_multiplier * total_group_score
+        assignee_types[assignee]['group']['potential'] = total_group_score
+        assignee_types[assignee]['group']['multiplier'] = grp_multiplier
+        print('{}: {} because {} * {}'.format(assignee, grp_multiplier * total_group_score, grp_multiplier, total_group_score))
+
+
 def render_report(
         assignee_types: Dict[str, Dict[str, Dict[str, int]]],
         group_score: Dict[str, float],
@@ -218,5 +238,7 @@ if __name__ == '__main__':
     compute_individual_scores(student_map, avg_tasks, avg_prs, avg_reviews)
     group_scores = compute_base_group_score(student_map, args.real_tests, args.expected_tests)
 
-    render_report(student_map, group_scores, avg_tasks, avg_prs, avg_reviews, args.output)
-    print(json.dumps(student_map, indent=2))
+    compute_individual_group_score(student_map, group_scores['total'])
+
+    # render_report(student_map, group_scores, avg_tasks, avg_prs, avg_reviews, args.output)
+    # print(json.dumps(student_map, indent=2))
