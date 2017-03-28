@@ -1,6 +1,5 @@
 .idea
 venv
-old
 *.csv
 *.tsv
-*.html
+__pycache__
