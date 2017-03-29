@@ -13,7 +13,7 @@ TASK_WEIGHT = 34
 PR_WEIGHT = 33
 PARTICIPATION_WEIGHT = 33
 
-EXPECTED_RC_AND_P = 4
+EXPECTED_RC_AND_P = 8
 
 
 class Student:
@@ -38,7 +38,9 @@ class Student:
     @property
     def participation_value(self) -> float:
         rc_and_p = (self.participation.rc_and_p / EXPECTED_RC_AND_P) * 100
-        return (rc_and_p + self.participation.sprint_value) / 2
+        part_value = (rc_and_p * 0.25) + (self.participation.sprint_value * 0.75)
+        part_decimal = part_value / 100
+        return part_decimal * PARTICIPATION_WEIGHT
 
     @property
     def individual_grade(self):
