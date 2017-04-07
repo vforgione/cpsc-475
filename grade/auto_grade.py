@@ -66,8 +66,8 @@ def main(participation_filename, pr_filename, task_filename):
     prs: List[PrLoad] = read_pr_csv(pr_filename)
     tasks: List[TaskLoad] = read_tasks_csv(task_filename)
 
-    sum_completed = sum(task.closed_task_points for task in tasks)
-    avg_completed = sum_completed / len(tasks)
+    sum_completed = sum(task.closed_task_points for task in tasks if task.assignee != 'Unassigned')
+    avg_completed = sum_completed / len([task for task in tasks if task.assignee != 'Unassigned'])
     avg_completion = max([avg_completed, MINIMUM_COMPLETED_TASK_POINTS])
 
     _students = defaultdict(dict)
