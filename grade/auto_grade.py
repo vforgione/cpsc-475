@@ -81,6 +81,8 @@ def main(participation_filename, pr_filename, task_filename):
 
     cohort: List[Student] = []
     for name, kwargs in _students.items():
+        if name == 'Unassigned':
+            continue
         if 'tasks' not in kwargs:
             kwargs['tasks'] = TaskLoad(name)
         if 'prs' not in kwargs:
